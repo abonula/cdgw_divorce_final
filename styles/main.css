@@ -638,33 +638,56 @@ footer ul a:hover { color: var(--accent-soft); }
 
   /* ---- NAV ---- */
   .nav-links { display: none; }
-  /* Slide-in panel from the right — no scrolling needed */
+  /* Slide-in panel from the right — all 5 links visible, no scrolling */
   .nav-links {
     position: fixed; top: 0; right: -100%; bottom: 0;
-    width: min(320px, 85vw);
+    width: min(300px, 82vw);
     background: var(--surface);
     box-shadow: -8px 0 40px rgba(30,58,95,.15);
-    flex-direction: column; gap: 0;
-    padding: 88px 0 32px;
+    flex-direction: column;
+    /* Distribute links evenly to fill the panel height */
+    justify-content: center;
+    gap: 0;
+    padding: 0;
     z-index: 98;
-    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
+    transition: right 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden; /* no scroll ever */
   }
   .nav-links.open {
     display: flex;
     right: 0;
   }
-  .nav-links.open li { border-bottom: 1px solid var(--rule); }
+  /* Each li takes equal share of the panel */
+  .nav-links.open li {
+    flex: 1;
+    display: flex;
+    border-bottom: 1px solid var(--rule);
+  }
+  .nav-links.open li:first-child { border-top: 1px solid var(--rule); }
   .nav-links.open a {
-    font-size: 18px; min-height: 56px;
+    flex: 1;
     display: flex; align-items: center;
+    font-size: 17px;
     color: var(--ink); font-family: var(--serif); font-weight: 300;
     padding: 0 28px;
     transition: background 0.2s, color 0.2s;
+    text-decoration: none;
+    white-space: nowrap;
   }
   .nav-links.open a:hover, .nav-links.open a.active {
     background: var(--accent-light); color: var(--accent);
   }
+  /* Close X button inside the panel top-right */
+  .nav-close-btn {
+    position: absolute; top: 16px; right: 16px;
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); padding: 8px;
+    min-width: 44px; min-height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 99;
+    transition: color 0.2s;
+  }
+  .nav-close-btn:hover { color: var(--ink); }
   .nav-toggle { display: flex; }
   .logo-img { height: 52px; }
 

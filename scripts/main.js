@@ -10,19 +10,28 @@ if (nav) {
 const toggle = document.getElementById('nav-toggle');
 const navLinks = document.querySelector('.nav-links');
 
-// Create backdrop overlay element
+// Create backdrop overlay
 const overlay = document.createElement('div');
 overlay.className = 'nav-overlay';
 overlay.setAttribute('aria-hidden', 'true');
 document.body.appendChild(overlay);
+
+// Create close button inside panel
+const closeBtn = document.createElement('button');
+closeBtn.className = 'nav-close-btn';
+closeBtn.setAttribute('aria-label', 'Close navigation menu');
+closeBtn.innerHTML = `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>`;
+if (navLinks) navLinks.appendChild(closeBtn);
 
 function openNav() {
   navLinks.classList.add('open');
   overlay.classList.add('open');
   toggle.setAttribute('aria-expanded', 'true');
   toggle.setAttribute('aria-label', 'Close navigation menu');
-  toggle.innerHTML = `<svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>`;
-  document.body.style.overflow = 'hidden'; // prevent page scroll behind panel
+  document.body.style.overflow = 'hidden';
+  // Focus first link for accessibility
+  const firstLink = navLinks.querySelector('a');
+  if (firstLink) setTimeout(() => firstLink.focus(), 50);
 }
 
 function closeNav() {
@@ -30,7 +39,6 @@ function closeNav() {
   overlay.classList.remove('open');
   toggle.setAttribute('aria-expanded', 'false');
   toggle.setAttribute('aria-label', 'Open navigation menu');
-  toggle.innerHTML = `<svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>`;
   document.body.style.overflow = '';
 }
 
@@ -38,22 +46,14 @@ if (toggle && navLinks) {
   toggle.addEventListener('click', () => {
     navLinks.classList.contains('open') ? closeNav() : openNav();
   });
-
-  // Close on backdrop tap
+  closeBtn.addEventListener('click', () => { closeNav(); toggle.focus(); });
   overlay.addEventListener('click', closeNav);
-
-  // Close on Escape key
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && navLinks.classList.contains('open')) {
-      closeNav();
-      toggle.focus();
+      closeNav(); toggle.focus();
     }
   });
-
-  // Close when a nav link is tapped
-  navLinks.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', closeNav);
-  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
 }
 
 // ===== SCROLL REVEAL =====
