@@ -6,28 +6,53 @@ if (nav) {
   }, { passive: true });
 }
 
-// ===== MOBILE NAV TOGGLE =====
+// ===== MOBILE NAV — slide-in panel =====
 const toggle = document.getElementById('nav-toggle');
 const navLinks = document.querySelector('.nav-links');
+
+// Create backdrop overlay element
+const overlay = document.createElement('div');
+overlay.className = 'nav-overlay';
+overlay.setAttribute('aria-hidden', 'true');
+document.body.appendChild(overlay);
+
+function openNav() {
+  navLinks.classList.add('open');
+  overlay.classList.add('open');
+  toggle.setAttribute('aria-expanded', 'true');
+  toggle.setAttribute('aria-label', 'Close navigation menu');
+  toggle.innerHTML = `<svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>`;
+  document.body.style.overflow = 'hidden'; // prevent page scroll behind panel
+}
+
+function closeNav() {
+  navLinks.classList.remove('open');
+  overlay.classList.remove('open');
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.setAttribute('aria-label', 'Open navigation menu');
+  toggle.innerHTML = `<svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>`;
+  document.body.style.overflow = '';
+}
+
 if (toggle && navLinks) {
   toggle.addEventListener('click', () => {
-    const open = navLinks.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', open);
-    toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    navLinks.classList.contains('open') ? closeNav() : openNav();
   });
+
+  // Close on backdrop tap
+  overlay.addEventListener('click', closeNav);
+
+  // Close on Escape key
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && navLinks.classList.contains('open')) {
-      navLinks.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.setAttribute('aria-label', 'Open navigation menu');
+      closeNav();
       toggle.focus();
     }
   });
-  document.addEventListener('click', e => {
-    if (!nav.contains(e.target)) {
-      navLinks.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }
+
+  // Close when a nav link is tapped
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', closeNav);
   });
 }
 
